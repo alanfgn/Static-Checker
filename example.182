@@ -1,0 +1,12 @@
+begin
+
+// comentario
+
+int a=2;
+bool     b = 4; // outro comentario ;
+
+func/* desespero */tion(){
+	string coisas == algo;
+}
+
+end
