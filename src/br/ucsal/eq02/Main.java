@@ -14,11 +14,14 @@ public class Main {
 
         HashMap<String, String> firstLevelFilter = new HashMap<>();
 
+        List<String> naturalDelimiters = new ArrayList<>();
+        //naturalDelimiters.add("\\s");
 
-        firstLevelFilter.put("[\\s\\t\\r\\n]+", " ");
         firstLevelFilter.put("//.*","");
-        firstLevelFilter.put("(\"(?:\\\\[^\"]|\\\\\"|.)*?\")|(?s)/\\*.*?\\*/", "");
-        firstLevelFilter.put("(?![a-z0-9\\'\"\\$\\+\\- \\.\\!=#&\\(/;\\[\\{<>%\\)\\*,\\]\\|\\}]).", "");
+        firstLevelFilter.put("(?s)/\\*.*?\\*/", "");
+        firstLevelFilter.put("[\\t\\r\\n]+"," ");
+        firstLevelFilter.put("[\\s](?=(?:\"[^\"]*\"|[^\"])*$)\n", " ");
+        firstLevelFilter.put("(?![a-z0-9\\'\"\\$\\+\\- \\.\\!=#&\\(/;\\[\\{<>%\\)\\*,\\]\\|\\}_]).", "");
 
         LexicalFilter lexicalFilter = new LexicalFilter(firstLevelFilter);
 
@@ -39,7 +42,7 @@ public class Main {
         atoms.add(new Atom("A13","float", AtomType.WORD));
         atoms.add(new Atom("A14","int", AtomType.WORD));
         atoms.add(new Atom("A15","if", AtomType.WORD));
-        //atoms.add(new Atom("A16","begin", AtomType.WORD));
+        atoms.add(new Atom("A16","begin", AtomType.WORD));
 
         atoms.add(new Atom("B01","!=", AtomType.SYMBOL));
         atoms.add(new Atom("B01","#", AtomType.SYMBOL));
@@ -66,9 +69,16 @@ public class Main {
         atoms.add(new Atom("B22",">", AtomType.SYMBOL));
         atoms.add(new Atom("B23","-", "\\-",AtomType.SYMBOL));
 
-        atoms.add(new Atom("C01","Character",       "\"\\'[a-z]\\'\"", AtomType.IDENTIFIER));
-        atoms.add(new Atom("C02","Constant-String", "\"\\\"[a-z 0-9\\$_\\. ]+\\”\"", AtomType.IDENTIFIER));
+        atoms.add(new Atom("C01","Character",       "\\'[a-z]\\'", AtomType.IDENTIFIER));
+        naturalDelimiters.add("\\'[a-z]?\\'?");
+
+        atoms.add(new Atom("C02","Constant-String", "\"[a-z 0-9\\$_\\. ]*\"", AtomType.IDENTIFIER));
+        naturalDelimiters.add("\"[a-z 0-9\\$_\\. ]*\"?");
+
         atoms.add(new Atom("C03","Float-Number",    "[0-9]+\\.[0-9]+(e[\\-|\\+]?[0-9]+)?",AtomType.IDENTIFIER));
+        naturalDelimiters.add("[0-9]+.");
+        naturalDelimiters.add("[0-9]+\\.[0-9]+e[\\-|\\+]?");
+
         atoms.add(new Atom("C04","Function",        "[a-z0-9_]+[a-z0-9]|[a-z]", AtomType.IDENTIFIER));
         atoms.add(new Atom("C05","Identifier",      "[a-z0-9_]*[a-z_]+",AtomType.IDENTIFIER));
         atoms.add(new Atom("C06","Number",          "[0-9]+",AtomType.IDENTIFIER));
@@ -77,7 +87,11 @@ public class Main {
 
         File fIle = new File("/home/alan/Projetos/eclipse-workspace/StaticChecker/src/br/ucsal/compiladores/example.182");
 
-        StaticChecker sc = new StaticChecker(atomTable, fIle, lexicalFilter);
+
+
+        System.out.println();
+
+        StaticChecker sc = new StaticChecker(atomTable, fIle, lexicalFilter, naturalDelimiters);
 
         try{
             sc.lexicalScanner();

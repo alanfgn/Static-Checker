@@ -24,9 +24,6 @@ public class AtomTable {
                    atoms.add(atom);
                }
            }
-            // devia sumir
-           if(atoms.size() > 0)
-               return atoms;
         }
         return atoms;
     }

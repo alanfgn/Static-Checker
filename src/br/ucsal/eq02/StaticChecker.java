@@ -13,14 +13,16 @@ public class StaticChecker {
     private LexicalFilter lexicalFilter;
 
     private List<Lexeme> lexemes;
+    private List<String> stayPoints;
 
     private SymbolTable symbolTable;
     private LexicalAnalysisReport lexicalAnalysisReport;
 
-    public StaticChecker(AtomTable atomTable, File file, LexicalFilter lexicalFilter) {
+    public StaticChecker(AtomTable atomTable, File file, LexicalFilter lexicalFilter, List<String> stayPoints) {
         this.atomTable = atomTable;
         this.file = file;
         this.lexicalFilter = lexicalFilter;
+        this.stayPoints = stayPoints;
     }
 
 
@@ -35,11 +37,19 @@ public class StaticChecker {
         this.lexicalFilter.setText(getFileText());
 
         text = lexicalFilter.applyLexicalFilters().getText();
+        System.out.println(text);
         int lastLexemeIndex = 0;
         String lexeme;
 
         for (int i = 1;i < text.length(); i++){
-            if(!atomTable.existisAtom(text.substring(lastLexemeIndex, i))){
+
+            String actualLexeme = text.substring(lastLexemeIndex, i);
+
+            if(!atomTable.existisAtom(actualLexeme)){
+                if(stayPoints.stream().anyMatch(x -> actualLexeme.matches(x))){
+                    continue;
+                }
+
                 if(atomTable.existisAtom(text.substring(lastLexemeIndex, (i-1)))){
                     lexeme = text.substring(lastLexemeIndex,(i-1));
                     this.lexemes.add(new Lexeme(
@@ -54,6 +64,7 @@ public class StaticChecker {
     }
 
     public void lexicalAnalysis(){
+
         this.lexemes.forEach(System.out::println);
     }
 
