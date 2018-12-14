@@ -31,8 +31,17 @@ public class AtomTable {
         return this.getAtoms(lexeme).size() > 0;
     }
 
+    public List<Atom> getAtomsByCodes(String[] codes){
+        return this.atoms.stream().filter(x -> Arrays.stream(codes).anyMatch(y -> y.equals(x.getCode())))
+                .collect(Collectors.toList());
+    }
+
     public List<Atom> getAtomsForType(AtomType atomType) {
         return this.atoms.stream().filter(x -> x.getAtomType().equals(atomType)).collect(Collectors.toList());
+    }
+
+    public void appendListAtoms(List<Atom> atoms){
+        this.atoms.addAll(atoms);
     }
 
     public void setAtoms(List<Atom> atoms) {
@@ -43,7 +52,7 @@ public class AtomTable {
         this.atoms.add(atom);
     }
 
-    public void getAllChars() {
-
+    public List<Atom> getAtoms() {
+        return atoms;
     }
 }

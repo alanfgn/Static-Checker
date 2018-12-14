@@ -63,6 +63,15 @@ public class LexicalFilter {
         return this.applyFirstLevelFilter().applySecondLevelFilter();
     }
 
+    public void toLowerCase(){
+        for (int idx = 0; idx < this.text.length(); idx++) {
+            char c = this.text.charAt(idx);
+            if (c >= 65 && c <= 65 + 27) {
+                this.text.setCharAt(idx, (char) ((int) (this.text.charAt(idx)) | 32));
+            }
+        }
+    }
+
     public StringBuffer getText() {
         return text;
     }

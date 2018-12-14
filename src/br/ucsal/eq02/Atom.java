@@ -44,6 +44,17 @@ public class Atom {
                 '}';
     }
 
+
+    public boolean isPossibleAfterAtom(Atom atom){
+        if(this.getPossibleAfterAtoms().size() == 0) return true;
+        return this.getPossibleAfterAtoms().contains(atom);
+    }
+
+    public boolean isPossibleBeforeAtom(Atom atom){
+        if(this.getPossibleBeforeAtoms().size() == 0) return true;
+        return this.getPossibleBeforeAtoms().contains(atom);
+    }
+
     public String getName() {
         return name;
     }

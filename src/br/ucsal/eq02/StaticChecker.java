@@ -35,9 +35,10 @@ public class StaticChecker {
         StringBuffer text;
         this.lexemes = new ArrayList<>();
         this.lexicalFilter.setText(getFileText());
+        this.lexicalFilter.toLowerCase();
 
         text = lexicalFilter.applyLexicalFilters().getText();
-        System.out.println(text);
+//        System.out.println(text);
         int lastLexemeIndex = 0;
         String lexeme;
 
@@ -65,8 +66,8 @@ public class StaticChecker {
 
     public void lexicalAnalysis() {
         this.resolveAmbiguity();
+        // this.lexemes.forEach(System.out::println);
 
-        this.lexemes.forEach(System.out::println);
     }
 
     public void resolveAmbiguity() {
@@ -90,25 +91,24 @@ public class StaticChecker {
 
             if (lexeme.getAtom().size() > 1) {
 
-                Lexeme afterLexeme = this.lexemes.get(i - 1);
-
-                if(i > this.lexemes.size()){
-                    lexeme.getAtom().stream().anyMatch(x -> x.getPossibleAfterAtoms().stream().anyMatch(y -> y))
+                if (i < this.lexemes.size()) {
+                    Lexeme afterLexeme = this.lexemes.get(i + 1);
+                    lexeme.setAtom(
+                            lexeme.getAtom().stream().filter(x -> afterLexeme.getAtom()
+                                    .stream().anyMatch(y -> x.isPossibleAfterAtom(y)))
+                                    .collect(Collectors.toList()));
                 }
 
-//                if(i - 1 > -1) {
-//                    Lexeme beforeLexeme = this.lexemes.get(i - 1);
-//                    lexeme.setAtom(lexeme.getAtom().stream()
-//                            .filter(x -> !x.getPossibleBeforeAtoms()
-//                                    .stream().anyMatch(y -> !y.getCode().equals(beforeLexeme)))
-//                            .collect(Collectors.toList()));
-//                }
+                if (i >= 0) {
+                    Lexeme beforeLexeme = this.lexemes.get(i - 1);
+                    lexeme.setAtom(
+                            lexeme.getAtom().stream().filter(x -> beforeLexeme.getAtom()
+                                    .stream().anyMatch(y -> x.isPossibleBeforeAtom(y)))
+                                    .collect(Collectors.toList()));
+                }
+
             }
         }
-    }
-
-    public List<Atom> filtrarAtoms(List<Atom> possibleAtoms, Lexeme lexeme){
-        ;
     }
 
     public SymbolTable getSymbolTable() {
