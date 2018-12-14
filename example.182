@@ -1,12 +1,16 @@
 begin
 
-// comentario
+int depois_;
+int a = 3;	
+// algo
+void /* aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa*/main(){
+	int nome = "Alan Souza Fagundes";
+	float b = 4;
+	bool fg_ = tru/*seila*/e;
+	int c = b + a;
+	return c; // comentarios são demais
+} 
 
-int a=2;
-bool     b = 4; // outro comentario ;
 
-func/* desespero */tion(){
-	string coisas == algo;
-}
 
 end

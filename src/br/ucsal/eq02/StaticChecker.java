@@ -17,13 +17,16 @@ public class StaticChecker {
     private List<String> stayPoints;
 
     private SymbolTable symbolTable;
-    private LexicalAnalysisReport lexicalAnalysisReport;
+    private int limit;
 
-    public StaticChecker(AtomTable atomTable, File file, LexicalFilter lexicalFilter, List<String> stayPoints) {
+    public StaticChecker(AtomTable atomTable, File file, LexicalFilter lexicalFilter, List<String> stayPoints,
+                         SymbolTable symbolTable, int limit) {
         this.atomTable = atomTable;
         this.file = file;
         this.lexicalFilter = lexicalFilter;
         this.stayPoints = stayPoints;
+        this.symbolTable = symbolTable;
+        this.limit = limit;
     }
 
     public StringBuffer getFileText() throws IOException {
@@ -38,7 +41,6 @@ public class StaticChecker {
         this.lexicalFilter.toLowerCase();
 
         text = lexicalFilter.applyLexicalFilters().getText();
-//        System.out.println(text);
         int lastLexemeIndex = 0;
         String lexeme;
 
@@ -53,6 +55,7 @@ public class StaticChecker {
 
                 if (atomTable.existisAtom(text.substring(lastLexemeIndex, (i - 1)))) {
                     lexeme = text.substring(lastLexemeIndex, (i - 1));
+
                     this.lexemes.add(new Lexeme(
                             lexeme,
                             atomTable.getAtoms(lexeme),
@@ -64,10 +67,38 @@ public class StaticChecker {
         }
     }
 
-    public void lexicalAnalysis() {
+    public void lexicalAnalysis() throws IOException{
         this.resolveAmbiguity();
-        // this.lexemes.forEach(System.out::println);
+        this.populeSymbolTable();
+        this.truncate();
+    }
 
+    public void truncate(){
+        for (Symbol symbol: symbolTable.getSymbols()) {
+            if(symbol.getLexeme().getLexeme().length() > 35){
+                symbol.setQuantitiyAfterTruncation(symbol.getLexeme().getLexeme().length());
+                symbol.setQuantitiyAfterTruncation(35);
+                symbol.getLexeme().setLexeme(symbol.getLexeme().getLexeme().substring(0,35));
+            }
+        }
+    }
+
+    public void populeSymbolTable() throws IOException{
+        for (int i = 0; i < this.lexemes.size(); i++) {
+            if(this.lexemes.get(i).getAtom().getAtomType().equals(AtomType.IDENTIFIER)) {
+                Symbol symbol = symbolTable.getSymbol(this.lexemes.get(i));
+
+                if (symbol == null){
+                    symbol = new Symbol(
+                                    lexemes.get(i),
+                                    symbolTable.getSymbolType(i, this.lexemes),
+                                    findPositions(lexemes.get(i)));
+                }
+
+                this.symbolTable.addSymbol(symbol);
+                this.lexemes.get(i).setSymbolTablePosition(symbol.getId());
+            }
+        }
     }
 
     public void resolveAmbiguity() {
@@ -77,11 +108,11 @@ public class StaticChecker {
         for (int i = 0; i < this.lexemes.size(); i++) {
             Lexeme lexeme = this.lexemes.get(i);
 
-            if (lexeme.getAtom().size() > 1) {
+            if (lexeme.isAmbiguous()) {
                 for (AtomType atomType : atomsSorted) {
-                    if (lexeme.getAtom().stream().map(x -> x.getAtomType()).anyMatch(x -> x.equals(atomType))) {
-                        lexeme.setAtom(
-                                lexeme.getAtom().stream()
+                    if (lexeme.getAtoms().stream().map(x -> x.getAtomType()).anyMatch(x -> x.equals(atomType))) {
+                        lexeme.setAtoms(
+                                lexeme.getAtoms().stream()
                                         .filter(x -> x.getAtomType().equals(atomType))
                                         .collect(Collectors.toList()));
                     }
@@ -89,20 +120,20 @@ public class StaticChecker {
             }
 
 
-            if (lexeme.getAtom().size() > 1) {
+            if (lexeme.isAmbiguous()) {
 
                 if (i < this.lexemes.size()) {
                     Lexeme afterLexeme = this.lexemes.get(i + 1);
-                    lexeme.setAtom(
-                            lexeme.getAtom().stream().filter(x -> afterLexeme.getAtom()
+                    lexeme.setAtoms(
+                            lexeme.getAtoms().stream().filter(x -> afterLexeme.getAtoms()
                                     .stream().anyMatch(y -> x.isPossibleAfterAtom(y)))
                                     .collect(Collectors.toList()));
                 }
 
                 if (i >= 0) {
                     Lexeme beforeLexeme = this.lexemes.get(i - 1);
-                    lexeme.setAtom(
-                            lexeme.getAtom().stream().filter(x -> beforeLexeme.getAtom()
+                    lexeme.setAtoms(
+                            lexeme.getAtoms().stream().filter(x -> beforeLexeme.getAtoms()
                                     .stream().anyMatch(y -> x.isPossibleBeforeAtom(y)))
                                     .collect(Collectors.toList()));
                 }
@@ -111,11 +142,35 @@ public class StaticChecker {
         }
     }
 
+    public int[] findPositions(Lexeme lexeme) throws IOException{
+        BufferedReader br = new BufferedReader(new FileReader(this.file));
+
+        int[] positions = new int[5];
+        int countPositions = 0;
+
+        String st;
+        int count = 1;
+        while ((st = br.readLine()) != null){
+
+            if(st.matches(".*"+lexeme.getLexeme()+".*")){
+                positions[countPositions] = count;
+                countPositions++;
+            }
+
+            if(countPositions == 5){
+                break;
+            }
+            count++;
+        }
+
+        return positions;
+    }
+
     public SymbolTable getSymbolTable() {
         return symbolTable;
     }
 
-    public LexicalAnalysisReport getLexicalAnalysisReport() {
-        return lexicalAnalysisReport;
+    public List<Lexeme> getLexemes() {
+        return lexemes;
     }
 }

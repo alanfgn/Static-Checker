@@ -36,7 +36,11 @@ public class AtomTable {
                 .collect(Collectors.toList());
     }
 
-    public List<Atom> getAtomsForType(AtomType atomType) {
+    public Atom getAtomByCode(String code) {
+        return getAtomsByCodes(new String[]{code}).get(0);
+    }
+
+        public List<Atom> getAtomsForType(AtomType atomType) {
         return this.atoms.stream().filter(x -> x.getAtomType().equals(atomType)).collect(Collectors.toList());
     }
 

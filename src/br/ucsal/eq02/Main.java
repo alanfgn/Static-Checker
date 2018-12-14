@@ -11,6 +11,10 @@ public class Main {
     public static void main(String[] args) {
 
         System.out.println("StaticChecker 2018.2 eq02");
+        System.out.println("Analisando o arquivo "+args[0]);
+
+        File fIle = new File(args[0]);
+     //   File fIle = new File("/home/alan/Projetos/eclipse-workspace/StaticChecker/src/br/ucsal/compiladores/example.182");
 
         HashMap<String, String> firstLevelFilter = new HashMap<>();
 
@@ -79,39 +83,131 @@ public class Main {
 
         stayPoints.add("\\'[a-z]?\\'?");
 
-        identifierAtoms.add(new Atom("C02", "Constant-String", "\"[a-z 0-9\\$_\\. ]*\"", AtomType.IDENTIFIER));
+        identifierAtoms.add(new Atom("C02", "Constant-String", "\"[a-z 0-9\\$_\\. ]*\"",
+                AtomType.IDENTIFIER));
         stayPoints.add("\"[a-z 0-9\\$_\\. ]*\"?");
 
-        identifierAtoms.add(new Atom("C03", "Float-Number", "[0-9]+\\.[0-9]+(e[\\-|\\+]?[0-9]+)?", AtomType.IDENTIFIER));
+        identifierAtoms.add(new Atom("C03", "Float-Number", "[0-9]+\\.[0-9]+(e[\\-|\\+]?[0-9]+)?",
+                AtomType.IDENTIFIER));
         stayPoints.add("[0-9]+.");
         stayPoints.add("[0-9]+\\.[0-9]+e[\\-|\\+]?");
 
-        String[] codesAfterAtomsFunction = {"B03"};
-        List<Atom> afterAtomsFunction = atomTable.getAtomsByCodes(codesAfterAtomsFunction);
+        List<Atom> afterAtomsFunction = atomTable.getAtomsByCodes(new String[]{"B03"});
 
         identifierAtoms.add(new Atom("C04", "Function", "[a-z0-9_]+[a-z0-9]|[a-z]",
                 AtomType.IDENTIFIER, afterAtomsFunction));
 
-        String[] codesAfterAtomsIdentifier = {"B01","B02","B04","B05","B08","B09"
-                ,"B10","B11","B12","B13","B15","B16","B17","B18","B19","B20",
-                "B21","B22","B23"};
-        List<Atom> afterAtomsIdentifier = atomTable.getAtomsByCodes(codesAfterAtomsIdentifier);
+        List<Atom> afterAtomsIdentifier =
+                atomTable.getAtomsByCodes(new String[]{"B01", "B02", "B04", "B05", "B08", "B09"
+                        , "B10", "B11", "B12", "B13", "B15", "B16", "B17", "B18", "B19", "B20",
+                        "B21", "B22", "B23"});
 
         identifierAtoms.add(new Atom("C05", "Identifier", "[a-z0-9_]*[a-z_]+",
                 AtomType.IDENTIFIER, afterAtomsIdentifier));
 
         atomTable.appendListAtoms(identifierAtoms);
 
- //       atomTable.getAtoms().stream().forEach(System.out::println);
 
-        File fIle = new File("/home/alan/Projetos/eclipse-workspace/StaticChecker/src/br/ucsal/compiladores/example.182");
+        List<SymbolRule> symbolRulesFL = new ArrayList<>();
+        symbolRulesFL.add(new SymbolRule(atomTable.getAtomByCode("C03")));
+        symbolRulesFL.add(new SymbolRule(
+                atomTable.getAtomsByCodes(new String[]{"A13"}),
+                atomTable.getAtomByCode("C04"),
+                null
+        ));
+
+        symbolRulesFL.add(new SymbolRule(
+                atomTable.getAtomsByCodes(new String[]{"A13"}),
+                atomTable.getAtomByCode("C05"),
+                null
+        ));
+        SymbolType symbolTypeFL = new SymbolType("Ponto Flutuante", "FL", symbolRulesFL);
 
 
-        StaticChecker sc = new StaticChecker(atomTable, fIle, lexicalFilter, stayPoints);
+        List<SymbolRule> symbolRulesIN = new ArrayList<>();
+        symbolRulesIN.add(new SymbolRule(atomTable.getAtomByCode("C06")));
+        symbolRulesIN.add(new SymbolRule(
+                atomTable.getAtomsByCodes(new String[]{"A14"}),
+                atomTable.getAtomByCode("C04"),
+                null
+        ));
+        symbolRulesIN.add(new SymbolRule(
+                atomTable.getAtomsByCodes(new String[]{"A14"}),
+                atomTable.getAtomByCode("C05"),
+                null
+        ));
+        SymbolType symbolTypeIN = new SymbolType("Inteiro", "IN", symbolRulesIN);
+
+        List<SymbolRule> symbolRulesST = new ArrayList<>();
+        symbolRulesST.add(new SymbolRule(atomTable.getAtomByCode("C02")));
+        symbolRulesST.add(new SymbolRule(
+                atomTable.getAtomsByCodes(new String[]{"A08"}),
+                atomTable.getAtomByCode("C04"),
+                null
+        ));
+        symbolRulesST.add(new SymbolRule(
+                atomTable.getAtomsByCodes(new String[]{"A08"}),
+                atomTable.getAtomByCode("C05"),
+                null
+        ));
+        SymbolType symbolTypeST = new SymbolType("String", "ST", symbolRulesST);
+
+        List<SymbolRule> symbolRulesCH = new ArrayList<>();
+        symbolRulesCH.add(new SymbolRule(atomTable.getAtomByCode("C01")));
+        symbolRulesCH.add(new SymbolRule(
+                atomTable.getAtomsByCodes(new String[]{"A05"}),
+                atomTable.getAtomByCode("C04"),
+                null
+        ));
+        symbolRulesCH.add(new SymbolRule(
+                atomTable.getAtomsByCodes(new String[]{"A05"}),
+                atomTable.getAtomByCode("C05"),
+                null
+        ));
+        SymbolType symbolTypeCH = new SymbolType("Character", "CH", symbolRulesCH);
+
+        List<SymbolRule> symbolRulesBO = new ArrayList<>();
+        symbolRulesBO.add(new SymbolRule(
+                atomTable.getAtomsByCodes(new String[]{"A01"}),
+                atomTable.getAtomByCode("C04"),
+                null
+        ));
+        symbolRulesBO.add(new SymbolRule(
+                atomTable.getAtomsByCodes(new String[]{"A01"}),
+                atomTable.getAtomByCode("C05"),
+                null
+        ));
+
+        SymbolType symbolTypeBO = new SymbolType("Booleano", "BO", symbolRulesBO);
+
+        List<SymbolRule> symbolRulesVO = new ArrayList<>();
+        symbolRulesVO.add(new SymbolRule(
+                atomTable.getAtomsByCodes(new String[]{"A04"}),
+                atomTable.getAtomByCode("C04"),
+                null
+        ));
+        SymbolType symbolTypeVO = new SymbolType("Void", "VO", symbolRulesVO);
+
+
+        List<SymbolType> symbolTypes = new ArrayList<>();
+        symbolTypes.add(symbolTypeFL);
+        symbolTypes.add(symbolTypeIN);
+        symbolTypes.add(symbolTypeST);
+        symbolTypes.add(symbolTypeCH);
+        symbolTypes.add(symbolTypeBO);
+        symbolTypes.add(symbolTypeVO);
+        SymbolTable symbolTable = new SymbolTable(symbolTypes);
+
+
+        StaticChecker sc = new StaticChecker(atomTable, fIle, lexicalFilter, stayPoints, symbolTable, 35);
 
         try {
+
             sc.lexicalScanner();
             sc.lexicalAnalysis();
+            ReportGenerator reportGenerator = new ReportGenerator(sc.getLexemes(), sc.getSymbolTable());
+            reportGenerator.generate("./");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
