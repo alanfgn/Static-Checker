@@ -1,5 +1,8 @@
 package br.ucsal.eq02;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Atom {
 
     private String code;
@@ -7,11 +10,25 @@ public class Atom {
     private String regex;
     private AtomType atomType;
 
-    public Atom(String code,String name,  String regex, AtomType atomType) {
+    private List<Atom> possibleAfterAtoms;
+    private List<Atom> possibleBeforeAtoms;
+
+
+    public Atom(String code, String name, String regex, AtomType atomType, List<Atom> possibleAfterAtoms, List<Atom> possibleBeforeAtoms) {
         this.code = code;
         this.name = name;
         this.regex = regex;
         this.atomType = atomType;
+        this.possibleAfterAtoms = possibleAfterAtoms;
+        this.possibleBeforeAtoms = possibleBeforeAtoms;
+    }
+
+    public Atom(String code, String name, String regex, AtomType atomType, List<Atom> possibleAfterAtoms) {
+        this(code, name, regex, atomType, possibleAfterAtoms, new ArrayList<>());
+    }
+
+    public Atom(String code, String name, String regex, AtomType atomType) {
+        this(code, name, regex, atomType, new ArrayList<>(), new ArrayList<>());
     }
 
     public Atom(String code, String name, AtomType atomType) {
@@ -57,5 +74,21 @@ public class Atom {
 
     public void setAtomType(AtomType atomType) {
         this.atomType = atomType;
+    }
+
+    public List<Atom> getPossibleAfterAtoms() {
+        return possibleAfterAtoms;
+    }
+
+    public void setPossibleAfterAtoms(List<Atom> possibleAfterAtoms) {
+        this.possibleAfterAtoms = possibleAfterAtoms;
+    }
+
+    public List<Atom> getPossibleBeforeAtoms() {
+        return possibleBeforeAtoms;
+    }
+
+    public void setPossibleBeforeAtoms(List<Atom> possibleBeforeAtoms) {
+        this.possibleBeforeAtoms = possibleBeforeAtoms;
     }
 }

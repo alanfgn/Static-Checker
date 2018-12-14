@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StaticChecker {
 
@@ -25,7 +26,6 @@ public class StaticChecker {
         this.stayPoints = stayPoints;
     }
 
-
     public StringBuffer getFileText() throws IOException {
         return new StringBuffer(new String(Files.readAllBytes(Paths.get(file.getPath()))));
     }
@@ -41,31 +41,74 @@ public class StaticChecker {
         int lastLexemeIndex = 0;
         String lexeme;
 
-        for (int i = 1;i < text.length(); i++){
+        for (int i = 1; i < text.length(); i++) {
 
             String actualLexeme = text.substring(lastLexemeIndex, i);
 
-            if(!atomTable.existisAtom(actualLexeme)){
-                if(stayPoints.stream().anyMatch(x -> actualLexeme.matches(x))){
+            if (!atomTable.existisAtom(actualLexeme)) {
+                if (stayPoints.stream().anyMatch(x -> actualLexeme.matches(x))) {
                     continue;
                 }
 
-                if(atomTable.existisAtom(text.substring(lastLexemeIndex, (i-1)))){
-                    lexeme = text.substring(lastLexemeIndex,(i-1));
+                if (atomTable.existisAtom(text.substring(lastLexemeIndex, (i - 1)))) {
+                    lexeme = text.substring(lastLexemeIndex, (i - 1));
                     this.lexemes.add(new Lexeme(
                             lexeme,
                             atomTable.getAtoms(lexeme),
                             lastLexemeIndex,
-                            (i-1)));
+                            (i - 1)));
                 }
                 lastLexemeIndex = i - 1;
             }
         }
     }
 
-    public void lexicalAnalysis(){
+    public void lexicalAnalysis() {
+        this.resolveAmbiguity();
 
         this.lexemes.forEach(System.out::println);
+    }
+
+    public void resolveAmbiguity() {
+
+        List<AtomType> atomsSorted = AtomType.getValuesSorted();
+
+        for (int i = 0; i < this.lexemes.size(); i++) {
+            Lexeme lexeme = this.lexemes.get(i);
+
+            if (lexeme.getAtom().size() > 1) {
+                for (AtomType atomType : atomsSorted) {
+                    if (lexeme.getAtom().stream().map(x -> x.getAtomType()).anyMatch(x -> x.equals(atomType))) {
+                        lexeme.setAtom(
+                                lexeme.getAtom().stream()
+                                        .filter(x -> x.getAtomType().equals(atomType))
+                                        .collect(Collectors.toList()));
+                    }
+                }
+            }
+
+
+            if (lexeme.getAtom().size() > 1) {
+
+                Lexeme afterLexeme = this.lexemes.get(i - 1);
+
+                if(i > this.lexemes.size()){
+                    lexeme.getAtom().stream().anyMatch(x -> x.getPossibleAfterAtoms().stream().anyMatch(y -> y))
+                }
+
+//                if(i - 1 > -1) {
+//                    Lexeme beforeLexeme = this.lexemes.get(i - 1);
+//                    lexeme.setAtom(lexeme.getAtom().stream()
+//                            .filter(x -> !x.getPossibleBeforeAtoms()
+//                                    .stream().anyMatch(y -> !y.getCode().equals(beforeLexeme)))
+//                            .collect(Collectors.toList()));
+//                }
+            }
+        }
+    }
+
+    public List<Atom> filtrarAtoms(List<Atom> possibleAtoms, Lexeme lexeme){
+        ;
     }
 
     public SymbolTable getSymbolTable() {

@@ -7,16 +7,16 @@ import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-public enum  AtomType{
+public enum AtomType {
     SYMBOL(1), WORD(2), IDENTIFIER(3), SUBMACHINE(4);
 
     private int importance;
 
-    AtomType(int importance){
+    AtomType(int importance) {
         this.importance = importance;
     }
 
-    public static List<AtomType> getValuesSorted(){
+    public static List<AtomType> getValuesSorted() {
         List<AtomType> atomTypes = Arrays.stream(AtomType.values()).collect(Collectors.toList());
         Collections.sort(atomTypes, new Comparator<AtomType>() {
             @Override

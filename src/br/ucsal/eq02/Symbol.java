@@ -12,7 +12,7 @@ public class Symbol {
     private String type;
     private int quantitiyBeforeTruncation;
     private int quantitiyAfterTruncation;
-    private List<Integer> posisitons;
+    private List<Integer> positions;
 
 
 }

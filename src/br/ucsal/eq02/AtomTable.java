@@ -14,21 +14,20 @@ public class AtomTable {
         this.atoms = atoms;
     }
 
-    public List<Atom> getAtoms(String lexeme){
+    public List<Atom> getAtoms(String lexeme) {
 
         List<Atom> atoms = new ArrayList<>();
 
-        for (AtomType atomType: AtomType.getValuesSorted()) {
-           for(Atom atom: getAtomsForType(atomType)) {
-               if (lexeme.matches(atom.getRegex())) {
-                   atoms.add(atom);
-               }
-           }
+        for (Atom atom : this.atoms) {
+            if (lexeme.matches(atom.getRegex())) {
+                atoms.add(atom);
+            }
         }
+
         return atoms;
     }
 
-    public boolean existisAtom(String lexeme){
+    public boolean existisAtom(String lexeme) {
         return this.getAtoms(lexeme).size() > 0;
     }
 
@@ -40,11 +39,11 @@ public class AtomTable {
         this.atoms = atoms;
     }
 
-    public void addAtom(Atom atom){
+    public void addAtom(Atom atom) {
         this.atoms.add(atom);
     }
 
-    public void getAllChars(){
+    public void getAllChars() {
 
     }
 }
