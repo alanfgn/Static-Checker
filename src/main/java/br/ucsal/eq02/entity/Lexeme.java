@@ -1,4 +1,6 @@
-package br.ucsal.eq02;
+package br.ucsal.eq02.entity;
+
+import br.ucsal.eq02.entity.Atom;
 
 import java.util.List;
 
@@ -27,7 +29,7 @@ public class Lexeme {
                 '}';
     }
 
-    public boolean isAmbiguous(){
+    public boolean isAmbiguous() {
         return this.getAtoms().size() > 1;
     }
 
@@ -46,8 +48,9 @@ public class Lexeme {
     public void setAtoms(List<Atom> atoms) {
         this.atoms = atoms;
     }
-    public Atom getAtom(){
-        if(!this.isAmbiguous())
+
+    public Atom getAtom() {
+        if (!this.isAmbiguous())
             return this.atoms.get(0);
         else
             return null;

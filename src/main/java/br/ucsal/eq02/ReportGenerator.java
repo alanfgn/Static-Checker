@@ -1,5 +1,9 @@
 package br.ucsal.eq02;
 
+import br.ucsal.eq02.entity.Lexeme;
+import br.ucsal.eq02.entity.Symbol;
+import br.ucsal.eq02.entity.SymbolTable;
+
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -32,9 +36,7 @@ public class ReportGenerator {
             writer.println(line);
         }
         writer.close();
-
     }
-
 
     public void generateTable(String path) throws FileNotFoundException, UnsupportedEncodingException {
 
@@ -45,7 +47,7 @@ public class ReportGenerator {
             String line = symbol.getId() + "   " + symbol.getLexeme().getLexeme()
                     + "   " + symbol.getLexeme().getAtom().getName()
                     + "   " + symbol.getLexeme().getAtom().getCode()
-                    + "   " + symbol.getSymbolType().getSigla()
+                    + "   " + symbol.getSymbolType().getAcronym()
                     + "   " + symbol.getQuantitiyBeforeTruncation()
                     + "   " + symbol.getQuantitiyAfterTruncation() + "   "
                     + Arrays.stream(symbol.getPositions()).mapToObj(x -> String.valueOf(x))

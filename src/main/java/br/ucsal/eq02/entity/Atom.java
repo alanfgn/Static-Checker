@@ -1,4 +1,4 @@
-package br.ucsal.eq02;
+package br.ucsal.eq02.entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,6 @@ public class Atom {
 
     private List<Atom> possibleAfterAtoms;
     private List<Atom> possibleBeforeAtoms;
-
 
     public Atom(String code, String name, String regex, AtomType atomType, List<Atom> possibleAfterAtoms, List<Atom> possibleBeforeAtoms) {
         this.code = code;
@@ -38,7 +37,7 @@ public class Atom {
 
     @Override
     public String toString() {
-        return "Atom{" +
+        return "Atom {" +
                 "code='" + code + '\'' +
                 ", name='" + name + '\'' +
                 ", atomType=" + atomType +
@@ -58,13 +57,13 @@ public class Atom {
         return Objects.hash(code);
     }
 
-    public boolean isPossibleAfterAtom(Atom atom){
-        if(this.getPossibleAfterAtoms().size() == 0) return true;
+    public boolean isPossibleAfterAtom(Atom atom) {
+        if (this.getPossibleAfterAtoms().size() == 0) return true;
         return this.getPossibleAfterAtoms().contains(atom);
     }
 
-    public boolean isPossibleBeforeAtom(Atom atom){
-        if(this.getPossibleBeforeAtoms().size() == 0) return true;
+    public boolean isPossibleBeforeAtom(Atom atom) {
+        if (this.getPossibleBeforeAtoms().size() == 0) return true;
         return this.getPossibleBeforeAtoms().contains(atom);
     }
 
@@ -72,47 +71,24 @@ public class Atom {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getCode() {
         return code;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
     public String getRegex() {
-        return regex;
-    }
-
-    public void setRegex(String regex) {
-        this.regex = regex;
+        return regex != null ? regex : name;
     }
 
     public AtomType getAtomType() {
         return atomType;
     }
 
-    public void setAtomType(AtomType atomType) {
-        this.atomType = atomType;
-    }
-
     public List<Atom> getPossibleAfterAtoms() {
         return possibleAfterAtoms;
-    }
-
-    public void setPossibleAfterAtoms(List<Atom> possibleAfterAtoms) {
-        this.possibleAfterAtoms = possibleAfterAtoms;
     }
 
     public List<Atom> getPossibleBeforeAtoms() {
         return possibleBeforeAtoms;
     }
 
-    public void setPossibleBeforeAtoms(List<Atom> possibleBeforeAtoms) {
-        this.possibleBeforeAtoms = possibleBeforeAtoms;
-    }
 }

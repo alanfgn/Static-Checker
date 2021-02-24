@@ -1,6 +1,8 @@
-package br.ucsal.eq02;
+package br.ucsal.eq02.entity;
 
-import java.lang.reflect.Array;
+import br.ucsal.eq02.entity.Atom;
+import br.ucsal.eq02.entity.AtomType;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,11 +29,12 @@ public class AtomTable {
         return atoms;
     }
 
-    public boolean existisAtom(String lexeme) {
+    // Maybe not
+    public boolean haveAtom(String lexeme) {
         return this.getAtoms(lexeme).size() > 0;
     }
 
-    public List<Atom> getAtomsByCodes(String[] codes){
+    public List<Atom> getAtomsByCodes(String[] codes) {
         return this.atoms.stream().filter(x -> Arrays.stream(codes).anyMatch(y -> y.equals(x.getCode())))
                 .collect(Collectors.toList());
     }
@@ -40,23 +43,11 @@ public class AtomTable {
         return getAtomsByCodes(new String[]{code}).get(0);
     }
 
-        public List<Atom> getAtomsForType(AtomType atomType) {
+    public List<Atom> getAtomsForType(AtomType atomType) {
         return this.atoms.stream().filter(x -> x.getAtomType().equals(atomType)).collect(Collectors.toList());
     }
 
-    public void appendListAtoms(List<Atom> atoms){
+    public void appendListAtoms(List<Atom> atoms) {
         this.atoms.addAll(atoms);
-    }
-
-    public void setAtoms(List<Atom> atoms) {
-        this.atoms = atoms;
-    }
-
-    public void addAtom(Atom atom) {
-        this.atoms.add(atom);
-    }
-
-    public List<Atom> getAtoms() {
-        return atoms;
     }
 }

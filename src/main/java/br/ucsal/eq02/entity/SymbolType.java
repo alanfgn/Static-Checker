@@ -1,20 +1,20 @@
-package br.ucsal.eq02;
+package br.ucsal.eq02.entity;
 
 import java.util.List;
 
 public class SymbolType {
 
     private String name;
-    private String sigla;
+    private String acronym;
     private List<SymbolRule> symbolsRules;
 
-    public SymbolType(String name, String sigla, List<SymbolRule> symbolsRules) {
+    public SymbolType(String name, String acronym, List<SymbolRule> symbolsRules) {
         this.name = name;
-        this.sigla = sigla;
+        this.acronym = acronym;
         this.symbolsRules = symbolsRules;
     }
 
-    public boolean isThisSymbol(int position, List<Lexeme> text){
+    public boolean isThisSymbol(int position, List<Lexeme> text) {
         return symbolsRules.stream().anyMatch(x -> x.isThisSymbol(position, text));
     }
 
@@ -22,7 +22,7 @@ public class SymbolType {
     public String toString() {
         return "SymbolType{" +
                 "name='" + name + '\'' +
-                ", sigla='" + sigla + '\'' +
+                ", acronym='" + acronym + '\'' +
                 '}';
     }
 
@@ -30,16 +30,8 @@ public class SymbolType {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSigla() {
-        return sigla;
-    }
-
-    public void setSigla(String sigla) {
-        this.sigla = sigla;
+    public String getAcronym() {
+        return acronym;
     }
 
     public List<SymbolRule> getSymbolsRules() {

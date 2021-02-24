@@ -1,8 +1,7 @@
-package br.ucsal.eq02;
+package br.ucsal.eq02.entity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SymbolTable {
 
@@ -13,20 +12,20 @@ public class SymbolTable {
         this.symbolTypes = symbolTypes;
     }
 
-    public SymbolType getSymbolType(int position, List<Lexeme> text){
-        return  this.symbolTypes.stream()
+    public SymbolType getSymbolType(int position, List<Lexeme> text) {
+        return this.symbolTypes.stream()
                 .filter(x -> x.isThisSymbol(position, text)).findFirst().orElse(null);
     }
 
-    public Symbol getSymbol(Lexeme lexeme){
-        return  symbols.stream().filter(x -> x.getLexeme().lexeme.equals(lexeme.getLexeme())).findFirst().orElse(null);
+    public Symbol getSymbol(Lexeme lexeme) {
+        return symbols.stream().filter(x -> x.getLexeme().lexeme.equals(lexeme.getLexeme())).findFirst().orElse(null);
     }
 
     public List<Symbol> getSymbols() {
         return symbols;
     }
 
-    public void addSymbol(Symbol symbol){
+    public void addSymbol(Symbol symbol) {
         this.symbols.add(symbol);
     }
 

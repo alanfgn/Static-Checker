@@ -11,3 +11,7 @@ fabric.properties
 *.class
 *.iml
 .attach*
+
+build/
+.gradle/
+gradle

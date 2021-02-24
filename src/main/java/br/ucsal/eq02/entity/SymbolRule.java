@@ -1,6 +1,8 @@
-package br.ucsal.eq02;
+package br.ucsal.eq02.entity;
 
-import java.util.ArrayList;
+import br.ucsal.eq02.entity.Atom;
+import br.ucsal.eq02.entity.Lexeme;
+
 import java.util.List;
 
 public class SymbolRule {

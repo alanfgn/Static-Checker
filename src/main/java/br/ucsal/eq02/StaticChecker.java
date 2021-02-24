@@ -1,5 +1,7 @@
 package br.ucsal.eq02;
 
+import br.ucsal.eq02.entity.*;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -48,12 +50,12 @@ public class StaticChecker {
 
             String actualLexeme = text.substring(lastLexemeIndex, i);
 
-            if (!atomTable.existisAtom(actualLexeme)) {
+            if (!atomTable.haveAtom(actualLexeme)) {
                 if (stayPoints.stream().anyMatch(x -> actualLexeme.matches(x))) {
                     continue;
                 }
 
-                if (atomTable.existisAtom(text.substring(lastLexemeIndex, (i - 1)))) {
+                if (atomTable.haveAtom(text.substring(lastLexemeIndex, (i - 1)))) {
                     lexeme = text.substring(lastLexemeIndex, (i - 1));
 
                     this.lexemes.add(new Lexeme(
@@ -62,37 +64,38 @@ public class StaticChecker {
                             lastLexemeIndex,
                             (i - 1)));
                 }
+
                 lastLexemeIndex = i - 1;
             }
         }
     }
 
-    public void lexicalAnalysis() throws IOException{
+    public void lexicalAnalysis() throws IOException {
         this.resolveAmbiguity();
         this.populeSymbolTable();
         this.truncate();
     }
 
-    public void truncate(){
-        for (Symbol symbol: symbolTable.getSymbols()) {
-            if(symbol.getLexeme().getLexeme().length() > 35){
+    public void truncate() {
+        for (Symbol symbol : symbolTable.getSymbols()) {
+            if (symbol.getLexeme().getLexeme().length() > 35) {
                 symbol.setQuantitiyAfterTruncation(symbol.getLexeme().getLexeme().length());
                 symbol.setQuantitiyAfterTruncation(35);
-                symbol.getLexeme().setLexeme(symbol.getLexeme().getLexeme().substring(0,35));
+                symbol.getLexeme().setLexeme(symbol.getLexeme().getLexeme().substring(0, 35));
             }
         }
     }
 
-    public void populeSymbolTable() throws IOException{
+    public void populeSymbolTable() throws IOException {
         for (int i = 0; i < this.lexemes.size(); i++) {
-            if(this.lexemes.get(i).getAtom().getAtomType().equals(AtomType.IDENTIFIER)) {
+            if (this.lexemes.get(i).getAtom().getAtomType().equals(AtomType.IDENTIFIER)) {
                 Symbol symbol = symbolTable.getSymbol(this.lexemes.get(i));
 
-                if (symbol == null){
+                if (symbol == null) {
                     symbol = new Symbol(
-                                    lexemes.get(i),
-                                    symbolTable.getSymbolType(i, this.lexemes),
-                                    findPositions(lexemes.get(i)));
+                            lexemes.get(i),
+                            symbolTable.getSymbolType(i, this.lexemes),
+                            findPositions(lexemes.get(i)));
                 }
 
                 this.symbolTable.addSymbol(symbol);
@@ -142,7 +145,7 @@ public class StaticChecker {
         }
     }
 
-    public int[] findPositions(Lexeme lexeme) throws IOException{
+    public int[] findPositions(Lexeme lexeme) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(this.file));
 
         int[] positions = new int[5];
@@ -150,19 +153,20 @@ public class StaticChecker {
 
         String st;
         int count = 1;
-        while ((st = br.readLine()) != null){
+        while ((st = br.readLine()) != null) {
 
-            if(st.matches(".*"+lexeme.getLexeme()+".*")){
+            if (st.matches(".*" + lexeme.getLexeme() + ".*")) {
                 positions[countPositions] = count;
                 countPositions++;
             }
 
-            if(countPositions == 5){
+            if (countPositions == 5) {
                 break;
             }
             count++;
         }
 
+        br.close();
         return positions;
     }
 

@@ -1,35 +1,33 @@
 package br.ucsal.eq02;
 
+import br.ucsal.eq02.entity.*;
+
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) {
-
         System.out.println("StaticChecker 2018.2 eq02");
-        System.out.println("Analisando o arquivo "+args[0]);
+        System.out.println("Analysing file: "+args[0]);
+
+        if (!(args.length > 0)) {
+            return;
+        }
 
         File fIle = new File(args[0]);
-     //   File fIle = new File("/home/alan/Projetos/eclipse-workspace/StaticChecker/src/br/ucsal/compiladores/example.182");
 
         HashMap<String, String> firstLevelFilter = new HashMap<>();
-
-        List<String> stayPoints = new ArrayList<>();
-
         firstLevelFilter.put("//.*", "");
         firstLevelFilter.put("(?s)/\\*.*?\\*/", "");
         firstLevelFilter.put("[\\t\\r\\n]+", " ");
         firstLevelFilter.put("[\\s](?=(?:\"[^\"]*\"|[^\"])*$)\n", " ");
         firstLevelFilter.put("(?![a-z0-9\\'\"\\$\\+\\- \\.\\!=#&\\(/;\\[\\{<>%\\)\\*,\\]\\|\\}_]).", "");
-
         LexicalFilter lexicalFilter = new LexicalFilter(firstLevelFilter);
 
         List<Atom> wordAtoms = new ArrayList<>();
-
         wordAtoms.add(new Atom("A01", "bool", AtomType.WORD));
         wordAtoms.add(new Atom("A02", "while", AtomType.WORD));
         wordAtoms.add(new Atom("A03", "break", AtomType.WORD));
@@ -48,6 +46,7 @@ public class Main {
         wordAtoms.add(new Atom("A16", "begin", AtomType.WORD));
 
         AtomTable atomTable = new AtomTable(wordAtoms);
+
         List<Atom> symbolAtoms = new ArrayList<>();
 
         symbolAtoms.add(new Atom("B01", "!=", AtomType.SYMBOL));
@@ -76,19 +75,19 @@ public class Main {
         symbolAtoms.add(new Atom("B23", "-", "\\-", AtomType.SYMBOL));
 
         atomTable.appendListAtoms(symbolAtoms);
+
         List<Atom> identifierAtoms = new ArrayList<>();
 
         identifierAtoms.add(new Atom("C06", "Number", "[0-9]+", AtomType.IDENTIFIER));
         identifierAtoms.add(new Atom("C01", "Character", "\\'[a-z]\\'", AtomType.IDENTIFIER));
-
-        stayPoints.add("\\'[a-z]?\\'?");
-
         identifierAtoms.add(new Atom("C02", "Constant-String", "\"[a-z 0-9\\$_\\. ]*\"",
                 AtomType.IDENTIFIER));
-        stayPoints.add("\"[a-z 0-9\\$_\\. ]*\"?");
-
         identifierAtoms.add(new Atom("C03", "Float-Number", "[0-9]+\\.[0-9]+(e[\\-|\\+]?[0-9]+)?",
                 AtomType.IDENTIFIER));
+
+        List<String> stayPoints = new ArrayList<>();
+        stayPoints.add("\\'[a-z]?\\'?");
+        stayPoints.add("\"[a-z 0-9\\$_\\. ]*\"?");
         stayPoints.add("[0-9]+.");
         stayPoints.add("[0-9]+\\.[0-9]+e[\\-|\\+]?");
 
@@ -188,7 +187,6 @@ public class Main {
         ));
         SymbolType symbolTypeVO = new SymbolType("Void", "VO", symbolRulesVO);
 
-
         List<SymbolType> symbolTypes = new ArrayList<>();
         symbolTypes.add(symbolTypeFL);
         symbolTypes.add(symbolTypeIN);
@@ -198,19 +196,15 @@ public class Main {
         symbolTypes.add(symbolTypeVO);
         SymbolTable symbolTable = new SymbolTable(symbolTypes);
 
-
         StaticChecker sc = new StaticChecker(atomTable, fIle, lexicalFilter, stayPoints, symbolTable, 35);
 
         try {
-
             sc.lexicalScanner();
             sc.lexicalAnalysis();
             ReportGenerator reportGenerator = new ReportGenerator(sc.getLexemes(), sc.getSymbolTable());
             reportGenerator.generate("./");
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 }

@@ -1,14 +1,13 @@
-package br.ucsal.eq02;
+package br.ucsal.eq02.entity;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public enum AtomType {
-    SYMBOL(1), WORD(2), IDENTIFIER(3), SUBMACHINE(4);
+    SYMBOL(1), WORD(2), IDENTIFIER(3), SUB_MACHINE(4);
 
     private int importance;
 

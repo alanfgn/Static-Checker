@@ -1,7 +1,6 @@
-package br.ucsal.eq02;
+package br.ucsal.eq02.entity;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class Symbol {
 
@@ -18,7 +17,6 @@ public class Symbol {
     private int[] positions;
 
     public Symbol(Lexeme lexeme, SymbolType symbolType, int[] positions) {
-
         this.id = Symbol.count;
         Symbol.count++;
 
